@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="cz.spookelsesfly.invoice_maker.controller.LayoutController">
+    <top>
+        <BorderPane>
+            <left>
+                <Label text="Invoice Maker"/>
+            </left>
+        </BorderPane>
+    </top>
+    <center>
+        <VBox>
+            <VBox styleClass="marginA">
+                <HBox styleClass="widget">
+                    <VBox styleClass="marginA">
+                        <Button text="My cabinet" onAction="#loadDashboard"/>
+                    </VBox>
+                    <VBox styleClass="marginB">
+                        <Button text="My clients" onAction="#loadClients"/>
+                    </VBox>
+                    <VBox styleClass="marginB">
+                        <Button text="Invoices" onAction="#loadInvoices"/>
+                    </VBox>
+                    <VBox styleClass="marginB">
+                        <Button text="⚙ Settings" onAction="#loadSettings"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+            <StackPane fx:id="contentPane" />
+        </VBox>
+    </center>
+    <bottom>
+        <HBox>
+            <Label text="© 2025 Spookelsesfly"/>
+        </HBox>
+    </bottom>
+</BorderPane>
