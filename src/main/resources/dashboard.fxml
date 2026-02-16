@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="cz.spookelsesfly.invoice_maker.controller.DashboardController">
+    <VBox>
+        <VBox styleClass="marginA">
+            <VBox styleClass="widget">
+                <HBox styleClass="marginA, center">
+                    <Label text="Create New Invoice" styleClass="widgetHeader"/>
+                </HBox>
+                <VBox styleClass="marginC">
+                    <Label text="Choose your client"/>
+                    <ComboBox fx:id="clientBox"/>
+                </VBox>
+                <VBox styleClass="marginC">
+                    <Label text="Add new data for invoice"/>
+                    <HBox>
+                        <ComboBox fx:id="lessonBox" promptText="type of lesson"/>
+                        <TextField fx:id="lessonAmountField" promptText="lessons amount"/>
+                    </HBox>
+                </VBox>
+                <HBox styleClass="marginC, center">
+                    <Button text="Create New Invoice" onAction="#createNewProformaInvoice"/>
+                </HBox>
+            </VBox>
+        </VBox>
+        <BorderPane>
+            <left>
+                <VBox styleClass="marginA">
+                    <VBox styleClass="widget">
+                        <HBox styleClass="marginA, center">
+                            <Label text="Invoices in process" styleClass="widgetHeader"/>
+                        </HBox>
+                        <VBox styleClass="marginA">
+                            <ScrollPane styleClass="scrollPane">
+                                <VBox fx:id="proformaInvoiceContainer"/>
+                            </ScrollPane>
+                        </VBox>
+                    </VBox>
+                </VBox>
+            </left>
+        </BorderPane>
+        <VBox styleClass="marginA">
+            <VBox styleClass="widget">
+                <HBox styleClass="marginA, center">
+                    <Label text="Create new receipt" styleClass="widgetHeader"/>
+                </HBox>
+                <VBox styleClass="marginC">
+                    <Label text="Choose invoice to create receipt"/>
+                    <HBox>
+                        <ComboBox fx:id="proformaInvoiceBox" promptText="Invoices in process"/>
+                        <DatePicker fx:id="datePicker" promptText="Choose date"/>
+                    </HBox>
+                </VBox>
+                <HBox styleClass="marginC, center">
+                    <Button text="Create new Receipt" onAction="#createNewInvoice"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </VBox>
+</VBox>
