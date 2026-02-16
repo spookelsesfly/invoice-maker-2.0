@@ -5,7 +5,7 @@
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="cz.spookelsesfly.invoice_maker.controller.InvoiceController">
+      fx:controller="cz.spookelsesfly.invoice_maker.controller.InvoicesController">
     <VBox>
         <VBox styleClass="marginA">
             <VBox styleClass="widget">

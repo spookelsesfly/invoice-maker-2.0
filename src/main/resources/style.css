@@ -46,11 +46,22 @@
     -fx-background-radius: 10;
     -fx-background-color: rgba(255, 255, 255, 0.9);
     -fx-alignment: center;
+    -fx-max-width: Infinity;
 }
 
-.scrollPane {
-    -fx-pref-width: 135px;
-    -fx-pref-height: 50px;
+.settingsScroll,
+.settingsScroll > .viewport,
+.settingsScroll .scroll-bar,
+.settingsScroll .scroll-bar .track,
+.settingsScroll .scroll-bar .increment-button,
+.settingsScroll .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.settingsScroll .scroll-bar .thumb {
+    -fx-background-color: rgba(0, 0, 0, 0.35);
+    -fx-background-radius: 8;
 }
 
 .scrollInvoicesPane {
