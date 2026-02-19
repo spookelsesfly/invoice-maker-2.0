@@ -19,8 +19,7 @@ public class LayoutController {
         this.applicationContext = applicationContext;
     }
 
-    @FXML
-    private StackPane contentPane;
+    @FXML private StackPane contentPane;
 
     @FXML
     private void loadDashboard(ActionEvent event) throws IOException {
