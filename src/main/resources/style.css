@@ -21,6 +21,10 @@
     -fx-text-fill: red;
 }
 
+.error {
+    -fx-text-fill: red;
+}
+
 .marginA { /*top right bottom left*/
     -fx-padding: 10;
 }

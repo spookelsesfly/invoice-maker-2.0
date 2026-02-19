@@ -7,6 +7,10 @@ import jakarta.persistence.*;
         name = "Client.findAll",
         query = "SELECT c FROM Client c"
 )
+@NamedQuery(
+        name = "Client.findByFirstNameAndLastName",
+        query = "SELECT c FROM Client c WHERE c.firstName = :firstName AND c.lastName = :lastName"
+)
 @Table(name="client")
 public class Client {
 
@@ -101,5 +105,10 @@ public class Client {
 
     public void setAddressState(String addressState) {
         this.addressState = addressState;
+    }
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName;
     }
 }
