@@ -118,7 +118,7 @@ public class ClientManagementController {
         boolean emailRequired = validateRequired(emailField.getText(), emailErrorLabel, "Email is required.");
         valid &= emailRequired;
         if (emailRequired) {
-            valid &= validateEmailFormat(emailField.getText(), emailErrorLabel);
+            valid &= validateEmail(emailField.getText(), emailErrorLabel);
         }
 
         valid &= validateAddress(
@@ -204,7 +204,7 @@ public class ClientManagementController {
         return true;
     }
 
-    private boolean validateEmailFormat(String email, Label errorLabel) {
+    private boolean validateEmail(String email, Label errorLabel) {
         if (!email.contains("@")) {
             errorLabel.setText("Email format is not valid.");
             errorLabel.setVisible(true);
