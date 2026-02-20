@@ -7,6 +7,8 @@
     <ScrollPane styleClass="settingsScroll" fitToWidth="true">
         <VBox>
             <fx:include source="client-management.fxml"/>
+            <fx:include source="lesson-management.fxml"/>
+            <fx:include source="invoice-management.fxml"/>
         </VBox>
     </ScrollPane>
 </VBox>

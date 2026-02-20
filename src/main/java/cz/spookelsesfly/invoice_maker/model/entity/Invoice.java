@@ -14,8 +14,10 @@ import java.time.LocalDate;
         query = "SELECT i FROM Invoice i WHERE i.client = :client"
 )
 @NamedQuery(
-        name = "Invoice.desc", // used for finding latest invoice
-        query = "SELECT i FROM Invoice i ORDER BY i.number DESC"
+        name = "Invoice.findLatestForYear",
+        query = "SELECT i FROM Invoice i " +
+                "WHERE i.number BETWEEN :start AND :end " +
+                "ORDER BY i.number DESC"
 )
 @NamedQuery(
         name = "Invoice.findAllUnpaid",
@@ -49,8 +51,8 @@ public class Invoice {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @Column(name = "payed")
-    private Boolean payed;
+    @Column(name = "payed", nullable = false)
+    private boolean payed = false;
 
     @Column(name = "date_of_payment")
     private LocalDate dateOfPayment;
@@ -120,7 +122,7 @@ public class Invoice {
         this.date = date;
     }
 
-    public Boolean getPayed() {
+    public boolean isPayed() {
         return payed;
     }
 
@@ -150,5 +152,10 @@ public class Invoice {
 
     public void setInvoicePath(String invoicePath) {
         this.invoicePath = invoicePath;
+    }
+
+    @Override
+    public String toString() {
+        return number + " - " + client.getLastName();
     }
 }

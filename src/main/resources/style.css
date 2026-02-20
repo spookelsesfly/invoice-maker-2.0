@@ -73,6 +73,10 @@
     -fx-pref-height: 400px;
 }
 
+.invoicesInProgressScrollPane {
+    -fx-pref-height: 75px;
+}
+
 .button {
     -fx-background-color: rgb(135, 135, 135, 0.9);
     -fx-text-fill: white;

@@ -14,26 +14,32 @@ public class InvoiceRepository extends BaseRepository<Invoice> {
         super(Invoice.class);
     }
 
-    public List<Invoice> findAllInvoices() {
+    public List<Invoice> findAll() {
         return em.createNamedQuery("Invoice.findAll", Invoice.class)
                 .getResultList();
     }
 
-    public List<Invoice> findAllInvoicesByClient(Client client) {
+    public List<Invoice> findAllByClient(Client client) {
         return em.createNamedQuery("Invoice.findAllByClient", Invoice.class)
                 .setParameter("client", client)
                 .getResultList();
     }
 
-    public Optional<Invoice> findLatestInvoice() {
-        return em.createNamedQuery("Invoice.desc", Invoice.class)
+    public Optional<Invoice> findLatestInvoiceForYear(int year) {
+        int start = year * 10000;
+        int end = start + 9999;
+
+        return em.createNamedQuery("Invoice.findLatestForYear", Invoice.class)
+                .setParameter("start", start)
+                .setParameter("end", end)
                 .setMaxResults(1)
                 .getResultList()
                 .stream()
                 .findFirst();
     }
 
-    public List<Invoice> findAllUnpaidInvoices() {
+
+    public List<Invoice> findAllUnpaid() {
         return em.createNamedQuery("Invoice.findAllUnpaid", Invoice.class)
                 .getResultList();
     }

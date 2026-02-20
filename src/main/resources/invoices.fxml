@@ -9,16 +9,35 @@
     <VBox>
         <VBox styleClass="marginA">
             <VBox styleClass="widget">
-                <HBox styleClass="marginA, center">
-                    <Label text="Choose your client" styleClass="widgetHeader"/>
-                </HBox>
-                <VBox styleClass="marginC">
-                    <Label text="Here you can find all your invoices"/>
+                <VBox styleClass="marginA, center">
+                    <Label text="Take a look at invoices" styleClass="widgetHeader"/>
                 </VBox>
+
+                <HBox styleClass="marginC, center">
+                    <VBox styleClass="marginA, center">
+                        <Label text="Show client invoices"/>
+                        <ComboBox fx:id="clientsComboBox"  onAction="#showClientInvoices"/>
+                    </VBox>
+
+                    <VBox styleClass="marginB, center">
+                        <Label text="Or"/>
+                    </VBox>
+
+                    <VBox styleClass="marginB, center">
+                        <Button text="Show all invoices" onAction="#showAllInvoices"/>
+                    </VBox>
+                </HBox>
+
+                <VBox fx:id="infoBox" styleClass="marginC"/>
+
                 <VBox styleClass="marginC">
                     <ScrollPane styleClass="scrollInvoicesPane">
-                        <VBox fx:id="clientInvoicesBox"/>
+                        <VBox fx:id="invoicesBox"/>
                     </ScrollPane>
+                </VBox>
+
+                <VBox styleClass="marginC, center">
+                    <Label fx:id="warningLabel" styleClass="error"/>
                 </VBox>
             </VBox>
         </VBox>

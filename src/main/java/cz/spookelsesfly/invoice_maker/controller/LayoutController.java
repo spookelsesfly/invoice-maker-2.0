@@ -27,11 +27,6 @@ public class LayoutController {
     }
 
     @FXML
-    private void loadClients(ActionEvent event) throws IOException {
-        loadContent("/clients.fxml");
-    }
-
-    @FXML
     private void loadInvoices(ActionEvent event) throws IOException {
         loadContent("/invoices.fxml");
     }
@@ -39,6 +34,11 @@ public class LayoutController {
     @FXML
     private void loadSettings(ActionEvent event) throws IOException {
         loadContent("/settings.fxml");
+    }
+
+    @FXML
+    private void initialize() throws IOException {
+        loadContent("/dashboard.fxml");
     }
 
     private void loadContent(String fxml) throws IOException {

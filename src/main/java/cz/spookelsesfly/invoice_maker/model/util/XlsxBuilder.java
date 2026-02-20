@@ -79,6 +79,8 @@ public class XlsxBuilder {
             cells.get("lesson.summary.total").setCellValue(invoice.getValue());
             cells.get("lesson.summary.totalToPay").setCellValue(invoice.getValue());
 
+            cells.get("lesson.payedMark").setCellValue("");
+
             byte[] qrCode = qrApiClient.getQRCode(2720344011L, 3030, invoice.getValue(), invoice.getNumber(), "0308", "Doučování z fyziky.");
 
             int pictureIndex = workbook.addPicture(qrCode, Workbook.PICTURE_TYPE_PNG);

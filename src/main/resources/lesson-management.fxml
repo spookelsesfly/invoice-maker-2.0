@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="cz.spookelsesfly.invoice_maker.controller.LessonManagementController">
+
+    <VBox>
+        <VBox styleClass="marginA">
+            <VBox styleClass="widget">
+                <HBox styleClass="marginA, center">
+                    <Label text="Add or update lesson" styleClass="widgetHeader"/>
+                </HBox>
+
+                <BorderPane>
+                    <left>
+                        <VBox styleClass="marginA">
+                            <VBox styleClass="marginC">
+                                <Label text="Name"/>
+                                <TextField fx:id="lessonNameField" promptText="STANDARD"/>
+                                <Label fx:id="lessonNameErrorLabel" styleClass="error"/>
+                            </VBox>
+
+                            <VBox styleClass="marginC">
+                                <Label text="Duration"/>
+                                <TextField fx:id="lessonDurationField" promptText="60"/>
+                                <Label fx:id="lessonDurationErrorLabel" styleClass="error"/>
+                            </VBox>
+
+                            <VBox styleClass="marginC">
+                                <Label text="Price"/>
+                                <TextField fx:id="priceField" promptText="500"/>
+                                <Label fx:id="priceErrorLabel" styleClass="error"/>
+                            </VBox>
+                        </VBox>
+                    </left>
+
+                    <right>
+                        <VBox styleClass="marginA, center">
+                            <VBox styleClass="marginA, center">
+                                <Button text="Add new lesson" onAction="#addNewLesson"/>
+                            </VBox>
+
+                            <VBox styleClass="marginC, center">
+                                <Label text="Or"/>
+                            </VBox>
+
+                            <VBox styleClass="marginC, center">
+                                <Label text="Lesson to update"/>
+                                <ComboBox fx:id="lessonsToUpdateComboBox"  onAction="#fillUpdateForm"/>
+                            </VBox>
+                        </VBox>
+                    </right>
+                </BorderPane>
+
+                <VBox styleClass="marginC, center">
+                    <Button fx:id="updateButton" text="Update" onAction="#update"/>
+                </VBox>
+
+                <VBox styleClass="marginC, center">
+                    <Label fx:id="warningLabel" styleClass="error"/>
+                </VBox>
+            </VBox>
+        </VBox>
+    </VBox>
+</VBox>
