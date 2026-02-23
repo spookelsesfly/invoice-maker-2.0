@@ -18,10 +18,7 @@
             <VBox styleClass="marginA">
                 <HBox styleClass="widget">
                     <VBox styleClass="marginA">
-                        <Button text="My cabinet" onAction="#loadDashboard"/>
-                    </VBox>
-                    <VBox styleClass="marginB">
-                        <Button text="My clients" onAction="#loadClients"/>
+                        <Button text="Dashboard" onAction="#loadDashboard"/>
                     </VBox>
                     <VBox styleClass="marginB">
                         <Button text="Invoices" onAction="#loadInvoices"/>

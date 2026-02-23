@@ -6,60 +6,93 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="cz.spookelsesfly.invoice_maker.controller.DashboardController">
-    <VBox>
-        <VBox styleClass="marginA">
-            <VBox styleClass="widget">
-                <HBox styleClass="marginA, center">
-                    <Label text="Create New Invoice" styleClass="widgetHeader"/>
-                </HBox>
-                <VBox styleClass="marginC">
-                    <Label text="Choose your client"/>
-                    <ComboBox fx:id="clientBox"/>
-                </VBox>
-                <VBox styleClass="marginC">
-                    <Label text="Add new data for invoice"/>
-                    <HBox>
-                        <ComboBox fx:id="lessonBox" promptText="type of lesson"/>
-                        <TextField fx:id="lessonAmountField" promptText="lessons amount"/>
+    <ScrollPane styleClass="settingsScroll" fitToWidth="true">
+        <VBox>
+            <VBox styleClass="marginA">
+                <VBox styleClass="widget">
+                    <HBox styleClass="marginA, center">
+                        <Label text="Create new invoice" styleClass="widgetHeader"/>
                     </HBox>
-                </VBox>
-                <HBox styleClass="marginC, center">
-                    <Button text="Create New Invoice" onAction="#createNewProformaInvoice"/>
-                </HBox>
-            </VBox>
-        </VBox>
-        <BorderPane>
-            <left>
-                <VBox styleClass="marginA">
-                    <VBox styleClass="widget">
-                        <HBox styleClass="marginA, center">
-                            <Label text="Invoices in process" styleClass="widgetHeader"/>
+
+                    <VBox styleClass="marginC">
+                        <Label text="Choose your client"/>
+                        <ComboBox fx:id="clientComboBox"/>
+                        <Label fx:id="clientComboBoxErrorLabel" styleClass="error"/>
+                    </VBox>
+
+                    <VBox styleClass="marginC">
+                        <Label text="Add new data for invoice"/>
+                        <HBox>
+                            <VBox>
+                                <ComboBox fx:id="lessonComboBox" promptText="type of lesson"/>
+                                <Label fx:id="lessonComboBoxErrorLabel" styleClass="error"/>
+                            </VBox>
+
+                            <VBox>
+                                <TextField fx:id="lessonsAmountField" promptText="Lessons amount"/>
+                                <Label fx:id="lessonsAmountErrorLabel" styleClass="error"/>
+                            </VBox>
                         </HBox>
-                        <VBox styleClass="marginA">
-                            <ScrollPane styleClass="scrollPane">
-                                <VBox fx:id="proformaInvoiceContainer"/>
-                            </ScrollPane>
-                        </VBox>
+                    </VBox>
+
+                    <VBox styleClass="marginC, center">
+                        <Button text="Create new invoice" onAction="#createNewInvoice"/>
+                    </VBox>
+
+                    <VBox styleClass="marginC, center">
+                        <Label fx:id="createNewInvoiceWarningLabel" styleClass="error"/>
                     </VBox>
                 </VBox>
-            </left>
-        </BorderPane>
-        <VBox styleClass="marginA">
-            <VBox styleClass="widget">
-                <HBox styleClass="marginA, center">
-                    <Label text="Create new receipt" styleClass="widgetHeader"/>
-                </HBox>
-                <VBox styleClass="marginC">
-                    <Label text="Choose invoice to create receipt"/>
-                    <HBox>
-                        <ComboBox fx:id="proformaInvoiceBox" promptText="Invoices in process"/>
-                        <DatePicker fx:id="datePicker" promptText="Choose date"/>
+            </VBox>
+
+            <BorderPane>
+                <left>
+                    <VBox styleClass="marginA">
+                        <VBox styleClass="widget">
+                            <HBox styleClass="marginA, center">
+                                <Label text="Invoices in progress" styleClass="widgetHeader"/>
+                            </HBox>
+
+                            <VBox styleClass="marginA">
+                                <ScrollPane styleClass="scrollPane, invoicesInProgressScrollPane">
+                                    <VBox fx:id="invoicesInProgressContainer"/>
+                                </ScrollPane>
+                            </VBox>
+                        </VBox>
+                    </VBox>
+                </left>
+            </BorderPane>
+
+            <VBox styleClass="marginA">
+                <VBox styleClass="widget">
+                    <HBox styleClass="marginA, center">
+                        <Label text="Mark invoice as paid" styleClass="widgetHeader"/>
                     </HBox>
+
+                    <VBox styleClass="marginC">
+                        <Label text="Choose invoice to mark as paid"/>
+                        <HBox>
+                            <VBox>
+                                <ComboBox fx:id="invoicesInProgressComboBox" promptText="Invoices in progress"/>
+                                <Label fx:id="invoicesInProgressComboBoxErrorLabel" styleClass="error"/>
+                            </VBox>
+
+                            <VBox>
+                                <DatePicker fx:id="paymentDatePicker" promptText="Choose date when invoice was payed"/>
+                                <Label fx:id="paymentDatePickerErrorLabel" styleClass="error"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <HBox styleClass="marginC, center">
+                        <Button text="Mark as paid" onAction="#markInvoiceAsPaid"/>
+                    </HBox>
+
+                    <VBox styleClass="marginC, center">
+                        <Label fx:id="markAsPaidWarningLabel" styleClass="error"/>
+                    </VBox>
                 </VBox>
-                <HBox styleClass="marginC, center">
-                    <Button text="Create new Receipt" onAction="#createNewInvoice"/>
-                </HBox>
             </VBox>
         </VBox>
-    </VBox>
+    </ScrollPane>
 </VBox>

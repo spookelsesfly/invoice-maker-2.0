@@ -19,17 +19,11 @@ public class LayoutController {
         this.applicationContext = applicationContext;
     }
 
-    @FXML
-    private StackPane contentPane;
+    @FXML private StackPane contentPane;
 
     @FXML
     private void loadDashboard(ActionEvent event) throws IOException {
         loadContent("/dashboard.fxml");
-    }
-
-    @FXML
-    private void loadClients(ActionEvent event) throws IOException {
-        loadContent("/clients.fxml");
     }
 
     @FXML
@@ -40,6 +34,11 @@ public class LayoutController {
     @FXML
     private void loadSettings(ActionEvent event) throws IOException {
         loadContent("/settings.fxml");
+    }
+
+    @FXML
+    private void initialize() throws IOException {
+        loadContent("/dashboard.fxml");
     }
 
     private void loadContent(String fxml) throws IOException {

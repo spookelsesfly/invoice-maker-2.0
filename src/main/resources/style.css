@@ -21,6 +21,10 @@
     -fx-text-fill: red;
 }
 
+.error {
+    -fx-text-fill: red;
+}
+
 .marginA { /*top right bottom left*/
     -fx-padding: 10;
 }
@@ -67,6 +71,10 @@
 .scrollInvoicesPane {
     -fx-pref-width: 135px;
     -fx-pref-height: 400px;
+}
+
+.invoicesInProgressScrollPane {
+    -fx-pref-height: 75px;
 }
 
 .button {

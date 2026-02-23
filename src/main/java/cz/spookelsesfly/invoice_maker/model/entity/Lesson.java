@@ -7,6 +7,10 @@ import jakarta.persistence.*;
         name = "Lesson.findAll",
         query = "SELECT l FROM Lesson l"
 )
+@NamedQuery(
+        name = "Lesson.findByType",
+        query = "SELECT l FROM Lesson l WHERE l.type = :type"
+)
 @Table(name = "lesson")
 public class Lesson {
 
@@ -57,5 +61,10 @@ public class Lesson {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return type;
     }
 }

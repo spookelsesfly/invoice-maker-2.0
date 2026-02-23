@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="cz.spookelsesfly.invoice_maker.controller.InvoiceManagementController">
+
+    <VBox>
+        <VBox styleClass="marginA">
+            <VBox styleClass="widget">
+                <HBox styleClass="marginA, center">
+                    <Label text="Edit invoice" styleClass="widgetHeader"/>
+                </HBox>
+
+                <VBox styleClass="marginC, center">
+                    <Label text="Invoice to update"/>
+                    <ComboBox fx:id="invoicesToUpdateComboBox" onAction="#fillUpdateForm"/>
+                    <Label fx:id="invoicesToUpdateErrorLabel" styleClass="error"/>
+                </VBox>
+
+                <VBox styleClass="marginC">
+                    <Label fx:id="invoiceNumberLabel" text="Invoice number xxxxxxxx" />
+                </VBox>
+
+                <VBox styleClass="marginC">
+                    <Label text="Client"/>
+                    <ComboBox fx:id="clientsForInvoiceComboBox"/>
+                    <Label fx:id="clientsForInvoiceErrorLabel" styleClass="error"/>
+                </VBox>
+
+                <VBox styleClass="marginC">
+                    <Label text="Lesson type"/>
+                    <ComboBox fx:id="lessonTypeComboBox"/>
+                    <Label fx:id="lessonTypeErrorLabel" styleClass="error"/>
+                </VBox>
+
+                <VBox styleClass="marginC">
+                    <Label text="Amount of lessons"/>
+                    <TextField fx:id="lessonsAmount" promptText="0"/>
+                    <Label fx:id="lessonsAmountErrorLabel" styleClass="error"/>
+                </VBox>
+
+                <VBox styleClass="marginC">
+                    <Label text="Date of creation"/>
+                    <DatePicker fx:id="creationDatePicker" promptText="Choose date when invoice was created"/>
+                    <Label fx:id="creationDateErrorLabel" styleClass="error"/>
+                </VBox>
+
+                <HBox>
+                    <VBox styleClass="marginA">
+                        <Label text="Date of payment"/>
+                        <DatePicker fx:id="paymentDatePicker" promptText="Choose date when invoice was payed"/>
+                        <Label fx:id="paymentDateErrorLabel" styleClass="error"/>
+                    </VBox>
+
+                    <VBox styleClass="marginB, center">
+                        <Label text="Or"/>
+                    </VBox>
+
+                    <VBox styleClass="marginB, center">
+                        <Button text="Not paid" onAction="#markAsNotPaid"/>
+                    </VBox>
+                </HBox>
+
+                <VBox styleClass="marginC, center">
+                    <Button fx:id="updateButton" text="Update" onAction="#update"/>
+                </VBox>
+
+                <VBox styleClass="marginC, center">
+                    <Label fx:id="warningLabel" styleClass="error"/>
+                </VBox>
+            </VBox>
+        </VBox>
+    </VBox>
+</VBox>

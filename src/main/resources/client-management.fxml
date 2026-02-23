@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="cz.spookelsesfly.invoice_maker.controller.ClientManagementController">
+
+    <VBox>
+        <VBox styleClass="marginA">
+            <VBox styleClass="widget">
+                <HBox styleClass="marginA, center">
+                    <Label text="Add or update client" styleClass="widgetHeader"/>
+                </HBox>
+
+                <BorderPane>
+                    <left>
+                        <VBox styleClass="marginA, center">
+                            <VBox styleClass="marginA, center">
+                                <Button text="Add new client" onAction="#addNewClient"/>
+                            </VBox>
+
+                            <VBox styleClass="marginC, center">
+                                <Label text="Or"/>
+                            </VBox>
+
+                            <VBox styleClass="marginC, center">
+                                <Label text="Client to update"/>
+                                <ComboBox fx:id="clientsToUpdateComboBox"  onAction="#fillUpdateForm"/>
+                            </VBox>
+                        </VBox>
+                    </left>
+
+                    <right>
+                        <VBox styleClass="marginA">
+                            <VBox styleClass="marginC">
+                                <Label text="First name"/>
+                                <TextField fx:id="firstNameField" promptText="Jan"/>
+                                <Label fx:id="firstNameErrorLabel" styleClass="error"/>
+                            </VBox>
+
+                            <VBox styleClass="marginC">
+                                <Label text="Second name"/>
+                                <TextField fx:id="lastNameField" promptText="Novák"/>
+                                <Label fx:id="lastNameErrorLabel" styleClass="error"/>
+                            </VBox>
+
+                            <VBox styleClass="marginC">
+                                <Label text="Phone number"/>
+                                <TextField fx:id="phoneField" promptText="+420 123 456 789"/>
+                                <Label fx:id="phoneErrorLabel" styleClass="error"/>
+                            </VBox>
+
+                            <VBox styleClass="marginC">
+                                <Label text="Email"/>
+                                <TextField fx:id="emailField" promptText="example@example.com"/>
+                                <Label fx:id="emailErrorLabel" styleClass="error"/>
+                            </VBox>
+
+                            <VBox styleClass="marginC">
+                                <Label text="Address"/>
+                                <TextField fx:id="addressFirstLineField" promptText="Pražská 123/4"/>
+                                <TextField fx:id="addressSecondLineField" promptText="123 45 Praha 1"/>
+                                <TextField fx:id="addressStateField" promptText="Česká republika"/>
+                                <Label fx:id="addressErrorLabel" styleClass="error"/>
+                            </VBox>
+                        </VBox>
+                    </right>
+                </BorderPane>
+
+                <VBox styleClass="marginC, center">
+                    <Button fx:id="updateButton" text="Update" onAction="#update"/>
+                </VBox>
+
+                <VBox styleClass="marginC, center">
+                    <Label fx:id="warningLabel" styleClass="error"/>
+                </VBox>
+            </VBox>
+        </VBox>
+    </VBox>
+</VBox>
