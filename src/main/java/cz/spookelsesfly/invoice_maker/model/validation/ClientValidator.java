@@ -7,40 +7,32 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientValidator {
 
-    public void validateClient(Client client) {
-        if (client == null) {
-            throw new ClientValidationException("Client is null.");
-        }
+    private final CommonValidator commonValidator;
 
-        validateRequired(client.getFirstName(), "First name is required.");
-        validateRequired(client.getLastName(), "Last name is required.");
-        validateRequired(client.getPhone(), "Phone number is required.");
-        validateRequired(client.getEmail(), "Email is required.");
-        validateEmail(client.getEmail());
-        validateAddress(
+    public ClientValidator(CommonValidator commonValidator) {
+        this.commonValidator = commonValidator;
+    }
+
+    public void validateClient(Client client) {
+        commonValidator.requireNotNull(client, () -> new ClientValidationException("Client is null."));
+
+        commonValidator.requireRequired(client.getFirstName(),
+                () -> new ClientValidationException("First name is required."));
+        commonValidator.requireRequired(client.getLastName(),
+                () -> new ClientValidationException("Last name is required."));
+        commonValidator.requireRequired(client.getPhone(),
+                () -> new ClientValidationException("Phone number is required."));
+
+        commonValidator.requireRequired(client.getEmail(),
+                () -> new ClientValidationException("Email is required."));
+        commonValidator.requireEmailLike(client.getEmail(),
+                () -> new ClientValidationException("Email format is not valid."));
+
+        commonValidator.requireCompleteAddress(
                 client.getAddressFirstLine(),
                 client.getAddressSecondLine(),
-                client.getAddressState()
+                client.getAddressState(),
+                () -> new ClientValidationException("Complete all address fields.")
         );
-    }
-
-    public void validateRequired(String value, String message) {
-        if (value == null || value.trim().isEmpty()) {
-            throw new ClientValidationException(message);
-        }
-    }
-
-    public void validateEmail(String email) {
-        if (!email.contains("@")) {
-            throw new ClientValidationException("Email format is not valid.");
-        }
-    }
-
-    public void validateAddress(String firstLine, String secondLine, String state) {
-        if (firstLine == null || firstLine.trim().isEmpty() ||
-                secondLine == null || secondLine.trim().isEmpty() ||
-                state == null || state.trim().isEmpty()) {
-            throw new ClientValidationException("Complete all address fields.");
-        }
     }
 }

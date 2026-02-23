@@ -44,7 +44,6 @@ public class LayoutController {
     private void loadContent(String fxml) throws IOException {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
-
         loader.setControllerFactory(applicationContext::getBean);
 
         Node view = loader.load();

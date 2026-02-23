@@ -7,25 +7,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class LessonValidator {
 
+    private final CommonValidator commonValidator;
+
+    public LessonValidator(CommonValidator commonValidator) {
+        this.commonValidator = commonValidator;
+    }
+
     public void validateLesson(Lesson lesson) {
-        if (lesson == null) {
-            throw new LessonValidationException("Lesson is null.");
-        }
+        commonValidator.requireNotNull(lesson, () -> new LessonValidationException("Lesson is null."));
 
-        validateRequired(lesson.getType(), "Lesson type is required.");
-        validatePositive(lesson.getDurationMinutes(), "Duration must be greater than 0.");
-        validatePositive(lesson.getPrice(), "Price must be greater than 0.");
-    }
-
-    public void validateRequired(String value, String message) {
-        if (value == null || value.trim().isEmpty()) {
-            throw new LessonValidationException(message);
-        }
-    }
-
-    public void validatePositive(int value, String message) {
-        if (value < 1) {
-            throw new LessonValidationException(message);
-        }
+        commonValidator.requireRequired(lesson.getType(),
+                () -> new LessonValidationException("Lesson type is required."));
+        commonValidator.requirePositive(lesson.getDurationMinutes(),
+                () -> new LessonValidationException("Duration must be greater than 0."));
+        commonValidator.requirePositive(lesson.getPrice(),
+                () -> new LessonValidationException("Price must be greater than 0."));
     }
 }

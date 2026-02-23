@@ -59,23 +59,25 @@ public class ClientManagementController {
     private Button updateButton;
 
     private final ClientService clientService;
+    private final CommonInterface commonInterface;
 
-    public ClientManagementController(ClientService clientService) {
+    public ClientManagementController(ClientService clientService, CommonInterface commonInterface) {
         this.clientService = clientService;
+        this.commonInterface = commonInterface;
     }
 
     @FXML
     private void initialize() {
-        setupErrorLabel(warningLabel);
+        commonInterface.setupErrorLabel(warningLabel);
 
-        setupErrorLabel(firstNameErrorLabel);
-        setupErrorLabel(lastNameErrorLabel);
-        setupErrorLabel(phoneErrorLabel);
-        setupErrorLabel(emailErrorLabel);
-        setupErrorLabel(addressErrorLabel);
+        commonInterface.setupErrorLabel(firstNameErrorLabel);
+        commonInterface.setupErrorLabel(lastNameErrorLabel);
+        commonInterface.setupErrorLabel(phoneErrorLabel);
+        commonInterface.setupErrorLabel(emailErrorLabel);
+        commonInterface.setupErrorLabel(addressErrorLabel);
 
         addNewClient();
-        reloadClientsComboBox();
+        commonInterface.reloadComboBox(clientsToUpdateComboBox, clientService::findAll);
     }
 
     @FXML
@@ -100,7 +102,6 @@ public class ClientManagementController {
         }
 
         fillForm(client);
-
         updateButton.setText("Update " + client);
     }
 
@@ -110,11 +111,11 @@ public class ClientManagementController {
 
         boolean valid = true;
 
-        valid &= validateRequired(firstNameField.getText(), firstNameErrorLabel, "First name is required.");
-        valid &= validateRequired(lastNameField.getText(), lastNameErrorLabel, "Last name is required.");
-        valid &= validateRequired(phoneField.getText(), phoneErrorLabel, "Phone number is required.");
+        valid &= commonInterface.validateRequired(firstNameField.getText(), firstNameErrorLabel, "First name is required.");
+        valid &= commonInterface.validateRequired(lastNameField.getText(), lastNameErrorLabel, "Last name is required.");
+        valid &= commonInterface.validateRequired(phoneField.getText(), phoneErrorLabel, "Phone number is required.");
 
-        boolean emailRequired = validateRequired(emailField.getText(), emailErrorLabel, "Email is required.");
+        boolean emailRequired = commonInterface.validateRequired(emailField.getText(), emailErrorLabel, "Email is required.");
         valid &= emailRequired;
         if (emailRequired) {
             valid &= validateEmail(emailField.getText(), emailErrorLabel);
@@ -128,8 +129,7 @@ public class ClientManagementController {
         );
 
         if (!valid) {
-            warningLabel.setText("Please fix highlighted fields.");
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, "Please fix highlighted fields.");
             return;
         }
 
@@ -150,13 +150,12 @@ public class ClientManagementController {
                 clientService.addNewClient(client);
             }
         } catch (ClientValidationException e) {
-            warningLabel.setText(e.getMessage());
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, e.getMessage());
             return;
         }
 
         clearForm();
-        reloadClientsComboBox();
+        commonInterface.reloadComboBox(clientsToUpdateComboBox, clientService::findAll);
         clientsToUpdateComboBox.getSelectionModel().clearSelection();
     }
 
@@ -165,13 +164,13 @@ public class ClientManagementController {
     }
 
     private void fillForm(Client client) {
-        firstNameField.setText(fillSingleField(client.getFirstName()));
-        lastNameField.setText(fillSingleField(client.getLastName()));
-        emailField.setText(fillSingleField(client.getEmail()));
-        phoneField.setText(fillSingleField(client.getPhone()));
-        addressFirstLineField.setText(fillSingleField(client.getAddressFirstLine()));
-        addressSecondLineField.setText(fillSingleField(client.getAddressSecondLine()));
-        addressStateField.setText(fillSingleField(client.getAddressState()));
+        firstNameField.setText(commonInterface.fillSingleField(client.getFirstName()));
+        lastNameField.setText(commonInterface.fillSingleField(client.getLastName()));
+        emailField.setText(commonInterface.fillSingleField(client.getEmail()));
+        phoneField.setText(commonInterface.fillSingleField(client.getPhone()));
+        addressFirstLineField.setText(commonInterface.fillSingleField(client.getAddressFirstLine()));
+        addressSecondLineField.setText(commonInterface.fillSingleField(client.getAddressSecondLine()));
+        addressStateField.setText(commonInterface.fillSingleField(client.getAddressState()));
     }
 
     private void clearForm() {
@@ -185,61 +184,31 @@ public class ClientManagementController {
     }
 
     private void clearErrors() {
-        clearErrorLabel(firstNameErrorLabel);
-        clearErrorLabel(lastNameErrorLabel);
-        clearErrorLabel(emailErrorLabel);
-        clearErrorLabel(phoneErrorLabel);
-        clearErrorLabel(addressErrorLabel);
-        clearErrorLabel(warningLabel);
-    }
-
-    private boolean validateRequired(String value, Label errorLabel, String message) {
-        if (value == null || value.trim().isEmpty()) {
-            errorLabel.setText(message);
-            errorLabel.setVisible(true);
-            return false;
-        }
-        clearErrorLabel(errorLabel);
-        return true;
+        commonInterface.clearErrorLabel(firstNameErrorLabel);
+        commonInterface.clearErrorLabel(lastNameErrorLabel);
+        commonInterface.clearErrorLabel(emailErrorLabel);
+        commonInterface.clearErrorLabel(phoneErrorLabel);
+        commonInterface.clearErrorLabel(addressErrorLabel);
+        commonInterface.clearErrorLabel(warningLabel);
     }
 
     private boolean validateEmail(String email, Label errorLabel) {
         if (!email.contains("@")) {
-            errorLabel.setText("Email format is not valid.");
-            errorLabel.setVisible(true);
+            commonInterface.showErrorLabel(errorLabel, "Email format is not valid.");
             return false;
         }
-        clearErrorLabel(errorLabel);
+        commonInterface.clearErrorLabel(errorLabel);
         return true;
     }
 
     private boolean validateAddress(String firstLine, String secondLine, String state, Label errorLabel) {
         if (firstLine == null || firstLine.trim().isEmpty() ||
-            secondLine == null || secondLine.trim().isEmpty() ||
-            state == null || state.trim().isEmpty()) {
-            errorLabel.setText("Complete all address fields.");
-            errorLabel.setVisible(true);
+                secondLine == null || secondLine.trim().isEmpty() ||
+                state == null || state.trim().isEmpty()) {
+            commonInterface.showErrorLabel(errorLabel, "Complete all address fields.");
             return false;
         }
-        clearErrorLabel(errorLabel);
+        commonInterface.clearErrorLabel(errorLabel);
         return true;
-    }
-
-    private void setupErrorLabel(Label label) {
-        label.setVisible(false);
-        label.managedProperty().bind(label.visibleProperty());
-    }
-
-    private void clearErrorLabel(Label label) {
-        label.setText("");
-        label.setVisible(false);
-    }
-
-    private void reloadClientsComboBox() {
-        clientsToUpdateComboBox.getItems().setAll(clientService.findAll());
-    }
-
-    private String fillSingleField(String s) {
-        return s == null ? "" : s;
     }
 }
