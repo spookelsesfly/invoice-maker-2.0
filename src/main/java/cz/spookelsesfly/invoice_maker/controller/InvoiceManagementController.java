@@ -64,30 +64,33 @@ public class InvoiceManagementController {
     private final InvoiceService invoiceService;
     private final ClientService clientService;
     private final LessonService lessonService;
+    private final CommonInterface commonInterface;
 
     public InvoiceManagementController(InvoiceService invoiceService,
                                        ClientService clientService,
-                                       LessonService lessonService) {
+                                       LessonService lessonService,
+                                       CommonInterface commonInterface) {
         this.invoiceService = invoiceService;
         this.clientService = clientService;
         this.lessonService = lessonService;
+        this.commonInterface = commonInterface;
     }
 
     @FXML
     private void initialize() {
-        setupErrorLabel(invoicesToUpdateErrorLabel);
-        setupErrorLabel(clientsForInvoiceErrorLabel);
-        setupErrorLabel(lessonTypeErrorLabel);
-        setupErrorLabel(lessonsAmountErrorLabel);
-        setupErrorLabel(creationDateErrorLabel);
-        setupErrorLabel(paymentDateErrorLabel);
-        setupErrorLabel(warningLabel);
+        commonInterface.setupErrorLabel(invoicesToUpdateErrorLabel);
+        commonInterface.setupErrorLabel(clientsForInvoiceErrorLabel);
+        commonInterface.setupErrorLabel(lessonTypeErrorLabel);
+        commonInterface.setupErrorLabel(lessonsAmountErrorLabel);
+        commonInterface.setupErrorLabel(creationDateErrorLabel);
+        commonInterface.setupErrorLabel(paymentDateErrorLabel);
+        commonInterface.setupErrorLabel(warningLabel);
 
         invoiceNumberLabel.setText("Invoice number");
 
-        reloadInvoicesComboBox();
-        reloadClientsComboBox();
-        reloadLessonsComboBox();
+        commonInterface.reloadComboBox(invoicesToUpdateComboBox, invoiceService::findAll);
+        commonInterface.reloadComboBox(clientsForInvoiceComboBox, clientService::findAll);
+        commonInterface.reloadComboBox(lessonTypeComboBox, lessonService::findAll);
 
         invoicesToUpdateComboBox.getSelectionModel().clearSelection();
         clearForm();
@@ -127,7 +130,7 @@ public class InvoiceManagementController {
             invoice.setDateOfPayment(null);
         }
         paymentDatePicker.setValue(null);
-        clearErrorLabel(paymentDateErrorLabel);
+        commonInterface.clearErrorLabel(paymentDateErrorLabel);
     }
 
     @FXML
@@ -136,42 +139,52 @@ public class InvoiceManagementController {
 
         boolean valid = true;
 
-        valid &= validateComboBoxSelected(invoicesToUpdateComboBox, invoicesToUpdateErrorLabel, "Choose invoice to update.");
-        valid &= validateComboBoxSelected(clientsForInvoiceComboBox, clientsForInvoiceErrorLabel, "Client is required.");
-        valid &= validateComboBoxSelected(lessonTypeComboBox, lessonTypeErrorLabel, "Lesson type is required.");
+        valid &= commonInterface.validateComboBoxSelected(
+                invoicesToUpdateComboBox,
+                invoicesToUpdateErrorLabel,
+                "Choose invoice to update."
+        );
 
-        Integer amount = parsePositiveIntOrNull(lessonsAmount.getText());
-        if (amount == null) {
-            lessonsAmountErrorLabel.setText("Amount must be a positive number.");
-            lessonsAmountErrorLabel.setVisible(true);
-            valid = false;
-        } else {
-            clearErrorLabel(lessonsAmountErrorLabel);
-        }
+        valid &= commonInterface.validateComboBoxSelected(
+                clientsForInvoiceComboBox,
+                clientsForInvoiceErrorLabel,
+                "Client is required."
+        );
+
+        valid &= commonInterface.validateComboBoxSelected(
+                lessonTypeComboBox,
+                lessonTypeErrorLabel,
+                "Lesson type is required."
+        );
+
+        valid &= commonInterface.validatePositive(
+                lessonsAmount.getText(),
+                lessonsAmountErrorLabel,
+                "Amount must be a positive number."
+        );
 
         LocalDate created = creationDatePicker.getValue();
         if (created == null) {
-            creationDateErrorLabel.setText("Date of creation is required.");
-            creationDateErrorLabel.setVisible(true);
+            commonInterface.showErrorLabel(creationDateErrorLabel, "Date of creation is required.");
             valid = false;
         } else {
-            clearErrorLabel(creationDateErrorLabel);
+            commonInterface.clearErrorLabel(creationDateErrorLabel);
         }
 
         LocalDate paidDate = paymentDatePicker.getValue();
         if (paidDate != null && created != null && paidDate.isBefore(created)) {
-            paymentDateErrorLabel.setText("Payment date cannot be before creation date.");
-            paymentDateErrorLabel.setVisible(true);
+            commonInterface.showErrorLabel(paymentDateErrorLabel, "Payment date cannot be before creation date.");
             valid = false;
         } else {
-            clearErrorLabel(paymentDateErrorLabel);
+            commonInterface.clearErrorLabel(paymentDateErrorLabel);
         }
 
         if (!valid) {
-            warningLabel.setText("Please fix highlighted fields.");
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, "Please fix highlighted fields.");
             return;
         }
+
+        int amount = Integer.parseInt(lessonsAmount.getText().trim());
 
         Invoice invoice = invoicesToUpdateComboBox.getValue();
         Client client = clientsForInvoiceComboBox.getValue();
@@ -196,40 +209,19 @@ public class InvoiceManagementController {
             invoiceService.updateInvoice(invoice);
 
         } catch (InvoiceValidationException e) {
-            warningLabel.setText(e.getMessage());
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, e.getMessage());
             return;
 
         } catch (Exception e) {
-            warningLabel.setText(e.getMessage() == null ? "Unexpected error occurred." : e.getMessage());
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, e.getMessage() == null ? "Unexpected error occurred." : e.getMessage());
             return;
         }
 
-        reloadInvoicesComboBox();
+        commonInterface.reloadComboBox(invoicesToUpdateComboBox, invoiceService::findAll);
         invoicesToUpdateComboBox.getSelectionModel().clearSelection();
         clearForm();
         invoiceNumberLabel.setText("Invoice number");
         updateButton.setText("Update");
-    }
-
-    private <T> boolean validateComboBoxSelected(ComboBox<T> comboBox, Label errorLabel, String message) {
-        if (comboBox.getValue() == null) {
-            errorLabel.setText(message);
-            errorLabel.setVisible(true);
-            return false;
-        }
-        clearErrorLabel(errorLabel);
-        return true;
-    }
-
-    private Integer parsePositiveIntOrNull(String s) {
-        try {
-            int n = Integer.parseInt(s.trim());
-            return n > 0 ? n : null;
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     private void clearForm() {
@@ -241,34 +233,12 @@ public class InvoiceManagementController {
     }
 
     private void clearErrors() {
-        clearErrorLabel(invoicesToUpdateErrorLabel);
-        clearErrorLabel(clientsForInvoiceErrorLabel);
-        clearErrorLabel(lessonTypeErrorLabel);
-        clearErrorLabel(lessonsAmountErrorLabel);
-        clearErrorLabel(creationDateErrorLabel);
-        clearErrorLabel(paymentDateErrorLabel);
-        clearErrorLabel(warningLabel);
-    }
-
-    private void setupErrorLabel(Label label) {
-        label.setVisible(false);
-        label.managedProperty().bind(label.visibleProperty());
-    }
-
-    private void clearErrorLabel(Label label) {
-        label.setText("");
-        label.setVisible(false);
-    }
-
-    private void reloadInvoicesComboBox() {
-        invoicesToUpdateComboBox.getItems().setAll(invoiceService.findAll());
-    }
-
-    private void reloadClientsComboBox() {
-        clientsForInvoiceComboBox.getItems().setAll(clientService.findAll());
-    }
-
-    private void reloadLessonsComboBox() {
-        lessonTypeComboBox.getItems().setAll(lessonService.findAll());
+        commonInterface.clearErrorLabel(invoicesToUpdateErrorLabel);
+        commonInterface.clearErrorLabel(clientsForInvoiceErrorLabel);
+        commonInterface.clearErrorLabel(lessonTypeErrorLabel);
+        commonInterface.clearErrorLabel(lessonsAmountErrorLabel);
+        commonInterface.clearErrorLabel(creationDateErrorLabel);
+        commonInterface.clearErrorLabel(paymentDateErrorLabel);
+        commonInterface.clearErrorLabel(warningLabel);
     }
 }

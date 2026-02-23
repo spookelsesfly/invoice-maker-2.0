@@ -9,47 +9,46 @@ import java.time.LocalDate;
 @Component
 public class InvoiceValidator {
 
+    private final CommonValidator commonValidator;
+
+    public InvoiceValidator(CommonValidator commonValidator) {
+        this.commonValidator = commonValidator;
+    }
+
     public void validateInvoice(Invoice invoice) {
-        requireNotNull(invoice, "Invoice is null.");
+        commonValidator.requireNotNull(invoice, () -> new InvoiceValidationException("Invoice is null."));
 
-        requireNotNull(invoice.getClient(), "Client is required.");
-        requireNotNull(invoice.getLesson(), "Lesson is required.");
+        commonValidator.requireNotNull(invoice.getClient(), () -> new InvoiceValidationException("Client is required."));
+        commonValidator.requireNotNull(invoice.getLesson(), () -> new InvoiceValidationException("Lesson is required."));
 
-        validatePositive(invoice.getLessonAmount(), "Lessons amount must be greater than 0.");
+        commonValidator.requirePositive(invoice.getLessonAmount(),
+                () -> new InvoiceValidationException("Lessons amount must be greater than 0."));
 
-        LocalDate created = requireNotNull(invoice.getDate(), "Date of creation is required.");
+        LocalDate created = commonValidator.requireNotNull(invoice.getDate(),
+                () -> new InvoiceValidationException("Date of creation is required."));
 
-        validatePositive(invoice.getValue(), "Invoice value must be greater than 0.");
+        commonValidator.requirePositive(invoice.getValue(),
+                () -> new InvoiceValidationException("Invoice value must be greater than 0."));
 
         if (invoice.isPayed()) {
-            LocalDate paid = requireNotNull(invoice.getDateOfPayment(), "Date of payment is required for paid invoice.");
+            LocalDate paid = commonValidator.requireNotNull(invoice.getDateOfPayment(),
+                    () -> new InvoiceValidationException("Date of payment is required for paid invoice."));
             validateDateOfPayment(created, paid);
         } else {
-             if (invoice.getDateOfPayment() != null) {
-                 throw new InvoiceValidationException("Unpaid invoice must not have payment date.");
-             }
+            if (invoice.getDateOfPayment() != null) {
+                throw new InvoiceValidationException("Unpaid invoice must not have payment date.");
+            }
         }
     }
 
     public void validateDateOfPayment(LocalDate dateOfCreation, LocalDate dateOfPayment) {
-        requireNotNull(dateOfCreation, "Date of creation is required.");
-        requireNotNull(dateOfPayment, "Date of payment is required.");
+        commonValidator.requireNotNull(dateOfCreation,
+                () -> new InvoiceValidationException("Date of creation is required."));
+        commonValidator.requireNotNull(dateOfPayment,
+                () -> new InvoiceValidationException("Date of payment is required."));
 
         if (dateOfPayment.isBefore(dateOfCreation)) {
             throw new InvoiceValidationException("Payment date cannot be before creation date.");
-        }
-    }
-
-    public <T> T requireNotNull(T value, String message) {
-        if (value == null) {
-            throw new InvoiceValidationException(message);
-        }
-        return value;
-    }
-
-    public void validatePositive(int value, String message) {
-        if (value < 1) {
-            throw new InvoiceValidationException(message);
         }
     }
 }

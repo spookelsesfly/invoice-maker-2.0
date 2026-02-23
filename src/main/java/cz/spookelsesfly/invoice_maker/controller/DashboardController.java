@@ -58,28 +58,31 @@ public class DashboardController {
     private final ClientService clientService;
     private final LessonService lessonService;
     private final InvoiceService invoiceService;
+    private final CommonInterface commonInterface;
 
     public DashboardController(ClientService clientService,
                                LessonService lessonService,
-                               InvoiceService invoiceService) {
+                               InvoiceService invoiceService,
+                               CommonInterface commonInterface) {
         this.clientService = clientService;
         this.lessonService = lessonService;
         this.invoiceService = invoiceService;
+        this.commonInterface = commonInterface;
     }
 
     @FXML
     private void initialize() {
-        setupErrorLabel(clientComboBoxErrorLabel);
-        setupErrorLabel(lessonComboBoxErrorLabel);
-        setupErrorLabel(lessonsAmountErrorLabel);
-        setupErrorLabel(createNewInvoiceWarningLabel);
+        commonInterface.setupErrorLabel(clientComboBoxErrorLabel);
+        commonInterface.setupErrorLabel(lessonComboBoxErrorLabel);
+        commonInterface.setupErrorLabel(lessonsAmountErrorLabel);
+        commonInterface.setupErrorLabel(createNewInvoiceWarningLabel);
 
-        setupErrorLabel(invoicesInProgressComboBoxErrorLabel);
-        setupErrorLabel(paymentDatePickerErrorLabel);
-        setupErrorLabel(markAsPaidWarningLabel);
+        commonInterface.setupErrorLabel(invoicesInProgressComboBoxErrorLabel);
+        commonInterface.setupErrorLabel(paymentDatePickerErrorLabel);
+        commonInterface.setupErrorLabel(markAsPaidWarningLabel);
 
-        loadClients();
-        loadLessons();
+        commonInterface.reloadComboBox(clientComboBox, clientService::findAll);
+        commonInterface.reloadComboBox(lessonComboBox, lessonService::findAll);
         loadInvoicesInProgress();
     }
 
@@ -89,24 +92,30 @@ public class DashboardController {
 
         boolean valid = true;
 
-        valid &= validateComboBoxSelected(clientComboBox, clientComboBoxErrorLabel, "Client is required.");
-        valid &= validateComboBoxSelected(lessonComboBox, lessonComboBoxErrorLabel, "Lesson is required.");
+        valid &= commonInterface.validateComboBoxSelected(
+                clientComboBox,
+                clientComboBoxErrorLabel,
+                "Client is required."
+        );
 
-        Integer amount = parsePositiveIntOrNull(lessonsAmountField.getText());
+        valid &= commonInterface.validateComboBoxSelected(
+                lessonComboBox,
+                lessonComboBoxErrorLabel,
+                "Lesson is required."
+        );
 
-        if (amount == null) {
-            lessonsAmountErrorLabel.setText("Lessons amount must be greater than 0.");
-            lessonsAmountErrorLabel.setVisible(true);
-            valid = false;
-        } else {
-            clearErrorLabel(lessonsAmountErrorLabel);
-        }
+        valid &= commonInterface.validatePositive(
+                lessonsAmountField.getText(),
+                lessonsAmountErrorLabel,
+                "Lessons amount must be greater than 0."
+        );
 
         if (!valid) {
-            createNewInvoiceWarningLabel.setText("Please fix highlighted fields.");
-            createNewInvoiceWarningLabel.setVisible(true);
+            commonInterface.showErrorLabel(createNewInvoiceWarningLabel, "Please fix highlighted fields.");
             return;
         }
+
+        int amount = Integer.parseInt(lessonsAmountField.getText().trim());
 
         try {
             invoiceService.addNewInvoice(clientComboBox.getValue(), lessonComboBox.getValue(), amount);
@@ -114,8 +123,7 @@ public class DashboardController {
             clearCreateInvoiceForm();
 
         } catch (Exception e) {
-            createNewInvoiceWarningLabel.setText(e.getMessage());
-            createNewInvoiceWarningLabel.setVisible(true);
+            commonInterface.showErrorLabel(createNewInvoiceWarningLabel, e.getMessage());
         }
     }
 
@@ -125,19 +133,20 @@ public class DashboardController {
 
         boolean valid = true;
 
-        valid &= validateComboBoxSelected(invoicesInProgressComboBox, invoicesInProgressComboBoxErrorLabel, "Invoice is required.");
+        valid &= commonInterface.validateComboBoxSelected(
+                invoicesInProgressComboBox,
+                invoicesInProgressComboBoxErrorLabel,
+                "Invoice is required.");
 
         if (paymentDatePicker.getValue() == null) {
-            paymentDatePickerErrorLabel.setText("Payment date is required.");
-            paymentDatePickerErrorLabel.setVisible(true);
+            commonInterface.showErrorLabel(paymentDatePickerErrorLabel, "Payment date is required.");
             valid = false;
         } else {
-            clearErrorLabel(paymentDatePickerErrorLabel);
+            commonInterface.clearErrorLabel(paymentDatePickerErrorLabel);
         }
 
         if (!valid) {
-            markAsPaidWarningLabel.setText("Please fix highlighted fields.");
-            markAsPaidWarningLabel.setVisible(true);
+            commonInterface.showErrorLabel(markAsPaidWarningLabel, "Please fix highlighted fields.");
             return;
         }
 
@@ -147,35 +156,15 @@ public class DashboardController {
             clearMarkPaidForm();
 
         } catch (Exception e) {
-            markAsPaidWarningLabel.setText(e.getMessage());
-            markAsPaidWarningLabel.setVisible(true);
+            commonInterface.showErrorLabel(markAsPaidWarningLabel, e.getMessage());
         }
-    }
-
-    private void loadClients() {
-        clientComboBox.getItems().setAll(clientService.findAll());
-    }
-
-    private void loadLessons() {
-        lessonComboBox.getItems().setAll(lessonService.findAll());
     }
 
     private void loadInvoicesInProgress() {
         List<Invoice> invoices = invoiceService.findAllInProcess();
 
         invoicesInProgressComboBox.getItems().setAll(invoices);
-
         invoicesInProgressContainer.getChildren().setAll(invoices.stream().map(i -> new Label(i.toString())).toList());
-    }
-
-    private <T> boolean validateComboBoxSelected(ComboBox<T> comboBox, Label errorLabel, String message) {
-        if (comboBox.getValue() == null) {
-            errorLabel.setText(message);
-            errorLabel.setVisible(true);
-            return false;
-        }
-        clearErrorLabel(errorLabel);
-        return true;
     }
 
     private void clearCreateInvoiceForm() {
@@ -185,10 +174,10 @@ public class DashboardController {
     }
 
     private void clearCreateInvoiceErrors() {
-        clearErrorLabel(clientComboBoxErrorLabel);
-        clearErrorLabel(lessonComboBoxErrorLabel);
-        clearErrorLabel(lessonsAmountErrorLabel);
-        clearErrorLabel(createNewInvoiceWarningLabel);
+        commonInterface.clearErrorLabel(clientComboBoxErrorLabel);
+        commonInterface.clearErrorLabel(lessonComboBoxErrorLabel);
+        commonInterface.clearErrorLabel(lessonsAmountErrorLabel);
+        commonInterface.clearErrorLabel(createNewInvoiceWarningLabel);
     }
 
     private void clearMarkPaidForm() {
@@ -197,27 +186,8 @@ public class DashboardController {
     }
 
     private void clearMarkPaidErrors() {
-        clearErrorLabel(invoicesInProgressComboBoxErrorLabel);
-        clearErrorLabel(paymentDatePickerErrorLabel);
-        clearErrorLabel(markAsPaidWarningLabel);
-    }
-
-    private void setupErrorLabel(Label label) {
-        label.setVisible(false);
-        label.managedProperty().bind(label.visibleProperty());
-    }
-
-    private void clearErrorLabel(Label label) {
-        label.setText("");
-        label.setVisible(false);
-    }
-
-    private Integer parsePositiveIntOrNull(String s) {
-        try {
-            int n = Integer.parseInt(s.trim());
-            return n > 0 ? n : null;
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        commonInterface.clearErrorLabel(invoicesInProgressComboBoxErrorLabel);
+        commonInterface.clearErrorLabel(paymentDatePickerErrorLabel);
+        commonInterface.clearErrorLabel(markAsPaidWarningLabel);
     }
 }

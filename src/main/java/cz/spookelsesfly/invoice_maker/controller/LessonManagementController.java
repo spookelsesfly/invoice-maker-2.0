@@ -41,21 +41,23 @@ public class LessonManagementController {
     private Button updateButton;
 
     private final LessonService lessonService;
+    private final CommonInterface commonInterface;
 
-    public LessonManagementController(LessonService lessonService) {
+    public LessonManagementController(LessonService lessonService, CommonInterface commonInterface) {
         this.lessonService = lessonService;
+        this.commonInterface = commonInterface;
     }
 
     @FXML
     private void initialize() {
-        setupErrorLabel(warningLabel);
+        commonInterface.setupErrorLabel(warningLabel);
 
-        setupErrorLabel(lessonNameErrorLabel);
-        setupErrorLabel(lessonDurationErrorLabel);
-        setupErrorLabel(priceErrorLabel);
+        commonInterface.setupErrorLabel(lessonNameErrorLabel);
+        commonInterface.setupErrorLabel(lessonDurationErrorLabel);
+        commonInterface.setupErrorLabel(priceErrorLabel);
 
         addNewLesson();
-        reloadLessonsComboBox();
+        commonInterface.reloadComboBox(lessonsToUpdateComboBox, lessonService::findAll);
     }
 
     @FXML
@@ -89,23 +91,37 @@ public class LessonManagementController {
 
         boolean valid = true;
 
-        valid &= validateRequired(lessonNameField.getText(), lessonNameErrorLabel, "Name is required.");
+        valid &= commonInterface.validateRequired(
+                lessonNameField.getText(),
+                lessonNameErrorLabel,
+                "Name is required.");
 
-        boolean durationRequired = validateRequired(lessonDurationField.getText(), lessonDurationErrorLabel, "Duration is required.");
+        boolean durationRequired = commonInterface.validateRequired(
+                lessonDurationField.getText(),
+                lessonDurationErrorLabel,
+                "Duration is required.");
+
         valid &= durationRequired;
         if (durationRequired) {
-            valid &= validateNonNullPositive(lessonDurationField.getText(), lessonDurationErrorLabel, "Duration must be greater than 1.");
+            valid &= commonInterface.validatePositive(
+                    lessonDurationField.getText(),
+                    lessonDurationErrorLabel,
+                    "Duration must be greater than 1.");
         }
 
-        boolean priceRequired = validateRequired(priceField.getText(), priceErrorLabel, "Price is required.");
+        boolean priceRequired = commonInterface.validateRequired(priceField.getText(),
+                priceErrorLabel,
+                "Price is required.");
+
         valid &= priceRequired;
         if (priceRequired) {
-            valid &= validateNonNullPositive(priceField.getText(), priceErrorLabel, "Price must be greater than 1.");
+            valid &= commonInterface.validatePositive(priceField.getText(),
+                    priceErrorLabel,
+                    "Price must be greater than 1.");
         }
 
         if (!valid) {
-            warningLabel.setText("Please fix highlighted fields.");
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, "Please fix highlighted fields.");
             return;
         }
 
@@ -122,13 +138,12 @@ public class LessonManagementController {
                 lessonService.addNewLesson(lesson);
             }
         } catch (LessonValidationException e) {
-            warningLabel.setText(e.getMessage());
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, e.getMessage());
             return;
         }
 
         clearForm();
-        reloadLessonsComboBox();
+        commonInterface.reloadComboBox(lessonsToUpdateComboBox, lessonService::findAll);
         lessonsToUpdateComboBox.getSelectionModel().clearSelection();
         updateButton.setText("Add new lesson");
     }
@@ -138,7 +153,7 @@ public class LessonManagementController {
     }
 
     private void fillForm(Lesson lesson) {
-        lessonNameField.setText(fillSingleField(lesson.getType()));
+        lessonNameField.setText(commonInterface.fillSingleField(lesson.getType()));
         lessonDurationField.setText(String.valueOf(lesson.getDurationMinutes()));
         priceField.setText(String.valueOf(lesson.getPrice()));
     }
@@ -150,53 +165,9 @@ public class LessonManagementController {
     }
 
     private void clearErrors() {
-        clearErrorLabel(lessonNameErrorLabel);
-        clearErrorLabel(lessonDurationErrorLabel);
-        clearErrorLabel(priceErrorLabel);
-        clearErrorLabel(warningLabel);
-    }
-
-    private boolean validateRequired(String value, Label errorLabel, String message) {
-        if (value == null || value.trim().isEmpty()) {
-            errorLabel.setText(message);
-            errorLabel.setVisible(true);
-            return false;
-        }
-        clearErrorLabel(errorLabel);
-        return true;
-    }
-
-    private boolean validateNonNullPositive(String value, Label errorLabel, String message) {
-        try {
-            if (Integer.parseInt(value.trim()) < 1) {
-                errorLabel.setText(message);
-                errorLabel.setVisible(true);
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            errorLabel.setText(message);
-            errorLabel.setVisible(true);
-            return false;
-        }
-        clearErrorLabel(errorLabel);
-        return true;
-    }
-
-    private void setupErrorLabel(Label label) {
-        label.setVisible(false);
-        label.managedProperty().bind(label.visibleProperty());
-    }
-
-    private void clearErrorLabel(Label label) {
-        label.setText("");
-        label.setVisible(false);
-    }
-
-    private void reloadLessonsComboBox() {
-        lessonsToUpdateComboBox.getItems().setAll(lessonService.findAll());
-    }
-
-    private String fillSingleField(String s) {
-        return s == null ? "" : s;
+        commonInterface.clearErrorLabel(lessonNameErrorLabel);
+        commonInterface.clearErrorLabel(lessonDurationErrorLabel);
+        commonInterface.clearErrorLabel(priceErrorLabel);
+        commonInterface.clearErrorLabel(warningLabel);
     }
 }

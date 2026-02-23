@@ -37,19 +37,22 @@ public class InvoicesController {
 
     private final ClientService clientService;
     private final InvoiceService invoiceService;
+    private final CommonInterface commonInterface;
 
     private final NumberFormat czNumberFormat;
 
     public InvoicesController(ClientService clientService,
-                              InvoiceService invoiceService) {
+                              InvoiceService invoiceService,
+                              CommonInterface commonInterface) {
         this.clientService = clientService;
         this.invoiceService = invoiceService;
+        this.commonInterface = commonInterface;
         this.czNumberFormat = NumberFormat.getInstance(new Locale("cs", "CZ"));
     }
 
     @FXML
     private void initialize() {
-        setupErrorLabel(warningLabel);
+        commonInterface.setupErrorLabel(warningLabel);
         loadClients();
         showAllInvoices();
     }
@@ -60,7 +63,7 @@ public class InvoicesController {
 
     @FXML
     private void showAllInvoices() {
-        clearWarning();
+        commonInterface.clearErrorLabel(warningLabel);
 
         clientsComboBox.getSelectionModel().clearSelection();
         showAllInfo();
@@ -71,7 +74,7 @@ public class InvoicesController {
 
     @FXML
     private void showClientInvoices() {
-        clearWarning();
+        commonInterface.clearErrorLabel(warningLabel);
 
         Client client = clientsComboBox.getValue();
         if (client == null) {
@@ -149,43 +152,29 @@ public class InvoicesController {
     }
 
     private void openInvoice(String relativePath) {
-        clearWarning();
+        commonInterface.clearErrorLabel(warningLabel);
 
         if (relativePath == null || relativePath.isBlank()) {
-            warningLabel.setText("Invoice file path is empty.");
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, "Invoice file path is empty.");
             return;
         }
 
         File file = new File(System.getProperty("user.dir"), relativePath);
 
         if (!file.exists()) {
-            warningLabel.setText("File does not exist: " + file.getAbsolutePath());
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, "File does not exist: " + file.getAbsolutePath());
             return;
         }
 
         if (!Desktop.isDesktopSupported()) {
-            warningLabel.setText("Opening files is not supported on this system.");
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, "Opening files is not supported on this system.");
             return;
         }
 
         try {
             Desktop.getDesktop().open(file);
         } catch (IOException e) {
-            warningLabel.setText("Failed to open file: " + file.getAbsolutePath());
-            warningLabel.setVisible(true);
+            commonInterface.showErrorLabel(warningLabel, "Failed to open file: " + file.getAbsolutePath());
         }
-    }
-
-    private void clearWarning() {
-        warningLabel.setText("");
-        warningLabel.setVisible(false);
-    }
-
-    private void setupErrorLabel(Label label) {
-        label.setVisible(false);
-        label.managedProperty().bind(label.visibleProperty());
     }
 }
